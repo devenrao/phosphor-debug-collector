@@ -1,0 +1,18 @@
+#!/bin/bash
+#
+# config: 123 20
+# @brief: Get bmcweb session details
+#
+# shellcheck disable=SC1091
+. "$DREPORT_INCLUDE/functions"
+
+# collect data only if bmcweb is present
+if [ -e "/usr/bin/bmcweb" ]; then
+    command="killall -s SIGUSR1 bmcweb; sleep 1"
+    eval "$command"
+    desc="BMCWeb current session snapshot data"
+    file_name="/var/persist/home/root/bmcweb_current_session_snapshot.json"
+    if [ -e "$file_name" ]; then
+        add_copy_file "$file_name" "$desc"
+    fi
+fi
