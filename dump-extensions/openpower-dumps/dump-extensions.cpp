@@ -38,14 +38,8 @@ void loadExtensions(sdbusplus::bus_t& bus, DumpManagerList& dumpList)
         throw std::runtime_error("Failed to create OpenPOWER dump directory");
     }
 
-    using DumpCreate = sdbusplus::client::xyz::openbmc_project::dump::Create<>;
-    auto opDumpPath =
-        sdbusplus::message::object_path(DumpCreate::namespace_path::value) /
-        DumpCreate::namespace_path::system;
-    auto opDumpEntryPath = opDumpPath / "Entry";
-
     dumpList.push_back(std::make_unique<openpower::dump::Manager>(
-        bus, eventP, opDumpPath.str.c_str(), opDumpEntryPath,
-        openpower::dump::OP_DUMP_PATH));
+        bus, eventP, openpower::dump::OP_DUMP_OBJ_PATH,
+        openpower::dump::OP_BASE_ENTRY_PATH, openpower::dump::OP_DUMP_PATH));
 }
 } // namespace phosphor::dump
