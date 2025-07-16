@@ -8,6 +8,7 @@ namespace openpower::dump::host::resource
 Entry::Entry(sdbusplus::bus_t& bus, const std::string& objPath, uint32_t dumpId,
              uint64_t timeStamp, uint64_t dumpSize, const uint32_t sourceId,
              std::string vspStr, std::string usrChallenge,
+             const std::string& acfPathStr,
              phosphor::dump::OperationStatus status, std::string originatorId,
              phosphor::dump::originatorTypes originatorType,
              phosphor::dump::Manager& parent) :
@@ -22,6 +23,7 @@ Entry::Entry(sdbusplus::bus_t& bus, const std::string& objPath, uint32_t dumpId,
     sourceDumpId(sourceId);
     vspString(vspStr);
     userChallenge(usrChallenge);
+    acfPath(acfPathStr);
     // Emit deferred signal.
     this->openpower::dump::host::resource::EntryIfaces::emit_object_added();
 }
@@ -42,6 +44,7 @@ Entry::Entry(sdbusplus::bus_t& bus, const std::string& objPath, uint32_t dumpId,
     sourceDumpId(sourceId);
     vspString("");
     userChallenge("");
+    acfPath("");
     dumpRequestStatus(sdbusplus::common::com::ibm::dump::entry::Resource::
                           HostResponse::Success);
 
