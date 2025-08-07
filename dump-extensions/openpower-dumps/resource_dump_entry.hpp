@@ -45,6 +45,7 @@ class Entry :
      *  @param[in] vspStr- Input to host to generate the resource dump.
      *  @param[in] usrChallenge - User Challenge needed by host to validate the
      *             request.
+     *  @param[in] acfPathStr - Path of the Access Control File.
      *  @param[in] status - status  of the dump.
      *  @param[in] originatorId - Id of the originator of the dump
      *  @param[in] originatorType - Originator type
@@ -53,7 +54,8 @@ class Entry :
     Entry(sdbusplus::bus_t& bus, const std::string& objPath, uint32_t dumpId,
           uint64_t timeStamp, uint64_t dumpSize, uint32_t sourceId,
           std::string vspStr, std::string usrChallenge,
-          phosphor::dump::OperationStatus status, std::string originatorId,
+          const std::string& acfPathStr, phosphor::dump::OperationStatus status,
+          std::string originatorId,
           phosphor::dump::originatorTypes originatorType,
           phosphor::dump::Manager& parent);
 

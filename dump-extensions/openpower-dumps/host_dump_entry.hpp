@@ -141,6 +141,24 @@ class Entry : virtual public phosphor::dump::Entry
     }
 
     /**
+     * @brief Gets the acf path string.
+     * @return The acf path string.
+     */
+    auto getAcfPath() const
+    {
+        return static_cast<const Derived*>(this)->acfPath();
+    }
+
+    /**
+     * @brief Sets the acf path string.
+     * @param[in] acfPath The acf path string to set.
+     */
+    void setAcfPath(const std::string& acfPath)
+    {
+        static_cast<Derived*>(this)->acfPath(acfPath);
+    }
+
+    /**
      * @brief Gets the dump request status.
      * @return The dump request status.
      */
