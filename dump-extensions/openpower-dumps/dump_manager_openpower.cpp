@@ -156,8 +156,8 @@ void Manager::restore()
                 continue;
             }
             // Locate the serialized file
-            std::filesystem::path serializedFilePath = p.path() / ".preserve" /
-                                                       "serialized_entry.bin";
+            std::filesystem::path serializedFilePath =
+                p.path() / ".preserve" / "serialized_entry.bin";
             if (std::filesystem::exists(serializedFilePath))
             {
                 // Call deserialize to update the entry from the serialized

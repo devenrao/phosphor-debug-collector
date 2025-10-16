@@ -392,7 +392,7 @@ std::unique_ptr<phosphor::dump::Entry>
         case OpDumpTypes::Hardware:
             return std::make_unique<hardware::Entry>(bus, objPath.string(), id,
                                                      mgr);
-        case OpDumpTypes::MemoryBufferSBE:                                   
+        case OpDumpTypes::MemoryBufferSBE:
         case OpDumpTypes::SBE:
             return std::make_unique<sbe::Entry>(bus, objPath.string(), id, mgr);
 
