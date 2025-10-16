@@ -142,11 +142,28 @@ void Manager::restore()
             lastEntryId = std::max(lastEntryId, entryId);
             auto objPath = std::filesystem::path(baseEntryPath) / idStr;
 
-            // Create a dump entry with default values
-            auto entry = dumpFact.createEntryWithDefaults(id, objPath);
-
-            // Deserialze the entry
-            entry->deserialize(p.path());
+            // Create a dump entry
+            std::unique_ptr<phosphor::dump::Entry> entry;
+            try
+            {
+                entry = dumpFact.createEntryWithDefaults(id, objPath);
+            }
+            catch (const std::invalid_argument& e)
+            {
+                lg2::error(
+                    "Invalid Dump Path, Dump Storage Path : {PATH} , Dump ID : {ID}",
+                    "PATH", objPath, "ID", id);
+                continue;
+            }
+            // Locate the serialized file
+            std::filesystem::path serializedFilePath = p.path() / ".preserve" /
+                                                       "serialized_entry.bin";
+            if (std::filesystem::exists(serializedFilePath))
+            {
+                // Call deserialize to update the entry from the serialized
+                // file
+                entry->deserialize(serializedFilePath);
+            }
 
             // Insert the entry into the entries map
             entries.insert(std::make_pair(id, std::move(entry)));
