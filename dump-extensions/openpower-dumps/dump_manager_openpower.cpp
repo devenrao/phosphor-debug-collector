@@ -46,7 +46,9 @@ sdbusplus::message::object_path Manager::createDump(
         using disabled =
             sdbusplus::xyz::openbmc_project::Dump::Create::Error::Disabled;
 
-        if (!util::isOPDumpsEnabled(bus))
+        DumpParameters dumpParams = util::extractDumpParameters(params);
+
+        if (!util::isOPDumpsEnabled(bus, dumpParams.type))
         {
             lg2::error("OpenPower dumps are disabled, skipping");
             elog<disabled>();
