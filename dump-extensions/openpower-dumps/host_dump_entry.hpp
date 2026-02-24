@@ -82,6 +82,11 @@ class Entry : virtual public phosphor::dump::Entry
      */
     void deserialize(const std::filesystem::path& dumpPath);
 
+    const char* dumpTypeString() const
+    {
+        return "Host Dump";
+    }
+
   protected:
     void removeSerializedEntry();
     uint32_t transportId;
