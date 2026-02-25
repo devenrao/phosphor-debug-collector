@@ -89,6 +89,11 @@ class Entry :
         dumpRequestStatus(status);
     }
 
+    const char* dumpTypeString() const
+    {
+        return "System Dump";
+    }
+
   private:
     static constexpr auto TRANSPORT_DUMP_TYPE_IDENTIFIER = 3;
 };

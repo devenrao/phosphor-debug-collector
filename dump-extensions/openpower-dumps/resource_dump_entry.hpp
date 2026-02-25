@@ -95,6 +95,11 @@ class Entry :
         dumpRequestStatus(status);
     }
 
+    const char* dumpTypeString() const
+    {
+        return "Resource Dump";
+    }
+
   private:
     static constexpr auto TRANSPORT_DUMP_TYPE_IDENTIFIER = 9;
 };
