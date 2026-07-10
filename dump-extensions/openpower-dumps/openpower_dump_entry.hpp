@@ -3,6 +3,8 @@
 #include "dump_entry.hpp"
 #include "dump_utils.hpp"
 
+#include <com/ibm/Dump/Create/common.hpp>
+#include <com/ibm/Dump/Create/server.hpp>
 #include <com/ibm/Dump/Entry/Hardware/server.hpp>
 #include <com/ibm/Dump/Entry/Hostboot/server.hpp>
 #include <com/ibm/Dump/Entry/SBE/server.hpp>
@@ -284,13 +286,17 @@ class Entry : public virtual openpower::dump::Entry, public virtual SBEIntf
      *  @param[in] failingUnit - Identifier of the failing unit associated with
      *  the dump.
      *  @param[in] parent - Reference to the managing dump manager.
+     *  @param[in] dumpFilesPath - Optional path to pre-collected dump files.
+     *  @param[in] sbeDumpTriggerType - Optional SBE dump trigger type.
      */
     Entry(sdbusplus::bus_t& bus, const std::string& objPath, uint32_t dumpId,
           uint64_t timeStamp, uint64_t fileSize,
           const std::filesystem::path& file,
           phosphor::dump::OperationStatus status, std::string originatorId,
           originatorTypes originatorType, uint64_t eid, uint64_t failingUnit,
-          phosphor::dump::Manager& parent) :
+          phosphor::dump::Manager& parent,
+          const std::optional<std::string>& dumpFilesPath = std::nullopt,
+          const std::optional<std::string>& sbeDumpTriggerType = std::nullopt) :
         phosphor::dump::Entry(bus, objPath.c_str(), dumpId, timeStamp, fileSize,
                               file, status, originatorId, originatorType,
                               parent),
@@ -301,6 +307,20 @@ class Entry : public virtual openpower::dump::Entry, public virtual SBEIntf
     {
         errorLogId(eid);
         failingUnitId(failingUnit);
+
+        // Set new SBE dump properties if provided
+        if (dumpFilesPath.has_value())
+        {
+            this->dumpFilesPath(dumpFilesPath.value());
+        }
+        if (sbeDumpTriggerType.has_value())
+        {
+            // Convert string to enum and set
+            auto triggerType = sdbusplus::com::ibm::Dump::server::Create::
+                convertSBEDumpTriggerTypeFromString(sbeDumpTriggerType.value());
+            this->sbeDumpTriggerType(triggerType);
+        }
+
         this->openpower::dump::sbe::SBEIntf::emit_object_added();
     }
 

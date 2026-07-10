@@ -204,8 +204,24 @@ openpower::dump::DumpParameters extractDumpParameters(
             OpCreate::CreateParameters::FailingUnitId),
         params);
 
-    return {dumpType, vspString, userChallenge, acfPath,
-            eid,      fid,       originatorId,  originatorType};
+    // Extract new SBE boot-failure dump parameters
+    std::optional<std::string> dumpFilesPath =
+        safeExtractParameter<std::string>(
+            OpCreate::convertCreateParametersToString(
+                OpCreate::CreateParameters::DumpFilesPath),
+            params);
+
+    std::optional<std::string> sbeDumpTriggerType =
+        safeExtractParameter<std::string>(
+            OpCreate::convertCreateParametersToString(
+                OpCreate::CreateParameters::SBEDumpTriggerType),
+            params);
+
+    return {dumpType,      vspString,
+            userChallenge, acfPath,
+            eid,           fid,
+            originatorId,  originatorType,
+            dumpFilesPath, sbeDumpTriggerType};
 }
 
 } // namespace openpower::dump::util
