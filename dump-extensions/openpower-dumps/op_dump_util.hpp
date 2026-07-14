@@ -28,6 +28,11 @@ struct DumpParameters
     std::optional<uint64_t> fid;
     std::string originatorId;
     phosphor::dump::originatorTypes originatorType;
+    // New fields for SBE boot-failure dumps
+    std::optional<std::string>
+        dumpFilesPath;      // Path to pre-collected dump files
+    std::optional<std::string>
+        sbeDumpTriggerType; // BootFailure, Timeout, Downstream)
 };
 
 namespace util

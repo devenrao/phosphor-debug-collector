@@ -181,7 +181,8 @@ std::unique_ptr<phosphor::dump::Entry> DumpEntryFactory::createSBEDumpEntry(
     return std::make_unique<sbe::Entry>(
         bus, objPath.c_str(), id, timeStamp, 0, std::string(),
         phosphor::dump::OperationStatus::InProgress, dumpParams.originatorId,
-        dumpParams.originatorType, dump_eid, dump_fid, mgr);
+        dumpParams.originatorType, dump_eid, dump_fid, mgr,
+        dumpParams.dumpFilesPath, dumpParams.sbeDumpTriggerType);
 }
 
 std::unique_ptr<phosphor::dump::Entry> DumpEntryFactory::createEntry(
