@@ -194,6 +194,7 @@ openpower::dump::DumpParameters extractDumpParameters(
             OpCreate::CreateParameters::ACFPath),
         params);
 
+    // Extract the error log id associated with the dump trigger.
     std::optional<uint64_t> eid = safeExtractParameter<uint64_t>(
         OpCreate::convertCreateParametersToString(
             OpCreate::CreateParameters::ErrorLogId),

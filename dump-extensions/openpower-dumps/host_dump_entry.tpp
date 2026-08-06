@@ -126,6 +126,7 @@ void Entry<Derived>::serialize()
         j["completedTime"] = completedTime();
         j["elapsed"] = elapsed();
         j["startTime"] = startTime();
+        j["pelid"] = getPelId();
 
         nlohmann::json::to_cbor(j, ofs);
     }
@@ -179,6 +180,7 @@ void Entry<Derived>::deserialize(const std::filesystem::path& dumpPath)
                 completedTime(j["completedTime"].get<uint64_t>());
                 elapsed(j["elapsed"].get<uint64_t>());
                 startTime(j["startTime"].get<uint64_t>());
+                setPelId(j.value("pelid", uint32_t(0)));
             }
             else
             {

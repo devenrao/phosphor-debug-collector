@@ -164,6 +164,24 @@ class Entry : virtual public phosphor::dump::Entry
     }
 
     /**
+     * @brief Gets the PEL ID associated with this dump entry.
+     * @return The PEL ID.
+     */
+    auto getPelId() const
+    {
+        return static_cast<const Derived*>(this)->pelid();
+    }
+
+    /**
+     * @brief Sets the PEL ID associated with this dump entry.
+     * @param[in] id The PEL ID to set.
+     */
+    void setPelId(uint32_t id)
+    {
+        static_cast<Derived*>(this)->pelid(id);
+    }
+
+    /**
      * @brief Gets the dump request status.
      * @return The dump request status.
      */
