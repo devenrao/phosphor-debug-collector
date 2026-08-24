@@ -68,7 +68,7 @@ std::unique_ptr<phosphor::dump::Entry> DumpEntryFactory::createSystemDumpEntry(
     return std::make_unique<host::system::Entry>(
         bus, objPath.c_str(), id, timeStamp, 0, INVALID_SOURCE_ID,
         phosphor::dump::OperationStatus::InProgress, dumpParams.originatorId,
-        dumpParams.originatorType, mgr);
+        dumpParams.originatorType, mgr, dumpParams.eid.value_or(0));
 }
 
 std::unique_ptr<phosphor::dump::Entry>
@@ -123,8 +123,7 @@ std::unique_ptr<phosphor::dump::Entry>
         util::throwInvalidArgument("ERROR_LOG_ID", "ARGUMENT_MISSING");
     }
 
-    const uint64_t dump_eid =
-        dumpParams.eid.has_value() ? dumpParams.eid.value() : 0;
+    const uint64_t dump_eid = dumpParams.eid.value_or(0);
 
     return std::make_unique<hostboot::Entry>(
         bus, objPath.c_str(), id, timeStamp, 0, std::string(),
@@ -148,10 +147,8 @@ std::unique_ptr<phosphor::dump::Entry>
         util::throwInvalidArgument("FAILING_UNIT_ID", "ARGUMENT_MISSING");
     }
 
-    const uint64_t dump_eid =
-        dumpParams.eid.has_value() ? dumpParams.eid.value() : 0;
-    const uint64_t dump_fid =
-        dumpParams.fid.has_value() ? dumpParams.fid.value() : 0;
+    const uint64_t dump_eid = dumpParams.eid.value_or(0);
+    const uint64_t dump_fid = dumpParams.fid.value_or(0);
 
     return std::make_unique<hardware::Entry>(
         bus, objPath.c_str(), id, timeStamp, 0, std::string(),
@@ -173,10 +170,8 @@ std::unique_ptr<phosphor::dump::Entry> DumpEntryFactory::createSBEDumpEntry(
         lg2::error("Required parameter id of failing unit is missing");
         util::throwInvalidArgument("FAILING_UNIT_ID", "ARGUMENT_MISSING");
     }
-    const uint64_t dump_eid =
-        dumpParams.eid.has_value() ? dumpParams.eid.value() : 0;
-    const uint64_t dump_fid =
-        dumpParams.fid.has_value() ? dumpParams.fid.value() : 0;
+    const uint64_t dump_eid = dumpParams.eid.value_or(0);
+    const uint64_t dump_fid = dumpParams.fid.value_or(0);
 
     return std::make_unique<sbe::Entry>(
         bus, objPath.c_str(), id, timeStamp, 0, std::string(),

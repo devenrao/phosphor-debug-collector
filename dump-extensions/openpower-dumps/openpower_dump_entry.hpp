@@ -8,6 +8,7 @@
 #include <com/ibm/Dump/Entry/Hardware/server.hpp>
 #include <com/ibm/Dump/Entry/Hostboot/server.hpp>
 #include <com/ibm/Dump/Entry/SBE/server.hpp>
+#include <org/open_power/Logging/PEL/PELID/server.hpp>
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/server/object.hpp>
 
@@ -107,7 +108,8 @@ namespace hostboot
 {
 
 using HostbootIntf = sdbusplus::server::object_t<
-    sdbusplus::com::ibm::Dump::Entry::server::Hostboot>;
+    sdbusplus::com::ibm::Dump::Entry::server::Hostboot,
+    sdbusplus::org::open_power::Logging::PEL::server::PELID>;
 
 /** @class Entry
  *  @brief Host Dump Entry implementation.
@@ -135,8 +137,7 @@ class Entry : public virtual openpower::dump::Entry, public virtual HostbootIntf
      *  @param[in] originatorId - Identifier of the originator of the dump.
      *  @param[in] originatorType - Type of the originator.
      *  @param[in] eid - Error log identifier associated with the dump.
-     *  @param[in] failingUnit - Identifier of the failing unit associated with
-     * the dump.
+     *                   Also used as the PEL Entry ID (truncated to uint32).
      *  @param[in] parent - Reference to the managing dump manager.
      */
     Entry(sdbusplus::bus_t& bus, const std::string& objPath, uint32_t dumpId,
@@ -154,6 +155,7 @@ class Entry : public virtual openpower::dump::Entry, public virtual HostbootIntf
         HostbootIntf(bus, objPath.c_str(), HostbootIntf::action::defer_emit)
     {
         errorLogId(eid);
+        pelid(static_cast<uint32_t>(eid));
         this->openpower::dump::hostboot::HostbootIntf::emit_object_added();
     }
 
@@ -180,7 +182,8 @@ namespace hardware
 {
 
 using HardwareIntf = sdbusplus::server::object_t<
-    sdbusplus::com::ibm::Dump::Entry::server::Hardware>;
+    sdbusplus::com::ibm::Dump::Entry::server::Hardware,
+    sdbusplus::org::open_power::Logging::PEL::server::PELID>;
 
 /** @class Entry
  *  @brief Hardware Dump Entry implementation.
@@ -209,6 +212,7 @@ class Entry : public virtual openpower::dump::Entry, public virtual HardwareIntf
      *  @param[in] originatorId - Identifier of the originator of the dump.
      *  @param[in] originatorType - Type of the originator.
      *  @param[in] eid - Error log identifier associated with the dump.
+     *                   Also used as the PEL Entry ID (truncated to uint32).
      *  @param[in] failingUnit - Identifier of the failing unit associated with
      * the dump.
      *  @param[in] parent - Reference to the managing dump manager.
@@ -229,6 +233,7 @@ class Entry : public virtual openpower::dump::Entry, public virtual HardwareIntf
     {
         errorLogId(eid);
         failingUnitId(failingUnit);
+        pelid(static_cast<uint32_t>(eid));
         this->openpower::dump::hardware::HardwareIntf::emit_object_added();
     }
 
@@ -253,8 +258,9 @@ class Entry : public virtual openpower::dump::Entry, public virtual HardwareIntf
 namespace sbe
 {
 
-using SBEIntf =
-    sdbusplus::server::object_t<sdbusplus::com::ibm::Dump::Entry::server::SBE>;
+using SBEIntf = sdbusplus::server::object_t<
+    sdbusplus::com::ibm::Dump::Entry::server::SBE,
+    sdbusplus::org::open_power::Logging::PEL::server::PELID>;
 
 /** @class Entry
  *  @brief SBE Dump Entry implementation.
@@ -283,6 +289,7 @@ class Entry : public virtual openpower::dump::Entry, public virtual SBEIntf
      *  @param[in] originatorId - Identifier of the originator of the dump.
      *  @param[in] originatorType - Type of the originator.
      *  @param[in] eid - Error log identifier associated with the dump.
+     *                   Also used as the PEL Entry ID (truncated to uint32).
      *  @param[in] failingUnit - Identifier of the failing unit associated with
      *  the dump.
      *  @param[in] parent - Reference to the managing dump manager.
@@ -307,6 +314,7 @@ class Entry : public virtual openpower::dump::Entry, public virtual SBEIntf
     {
         errorLogId(eid);
         failingUnitId(failingUnit);
+        pelid(static_cast<uint32_t>(eid));
 
         // Set new SBE dump properties if provided
         if (dumpFilesPath.has_value())

@@ -9,7 +9,7 @@ Entry::Entry(sdbusplus::bus_t& bus, const std::string& objPath, uint32_t dumpId,
              uint64_t timeStamp, uint64_t dumpSize, const uint32_t sourceId,
              phosphor::dump::OperationStatus status, std::string originatorId,
              phosphor::dump::originatorTypes originatorType,
-             phosphor::dump::Manager& parent) :
+             phosphor::dump::Manager& parent, uint64_t eid) :
     phosphor::dump::Entry(bus, objPath.c_str(), dumpId, timeStamp, dumpSize,
                           std::string(), status, originatorId, originatorType,
                           parent),
@@ -19,6 +19,7 @@ Entry::Entry(sdbusplus::bus_t& bus, const std::string& objPath, uint32_t dumpId,
     EntryIfaces(bus, objPath.c_str(), EntryIfaces::action::defer_emit)
 {
     sourceDumpId(sourceId);
+    pelid(static_cast<uint32_t>(eid));
     if (status == phosphor::dump::OperationStatus::Completed)
     {
         serialize();
@@ -32,7 +33,7 @@ Entry::Entry(sdbusplus::bus_t& bus, const std::string& objPath, uint32_t dumpId,
              phosphor::dump::OperationStatus status, std::string originatorId,
              phosphor::dump::originatorTypes originatorType,
              SystemImpact sysImpact, std::string usrChallenge,
-             phosphor::dump::Manager& parent) :
+             phosphor::dump::Manager& parent, uint64_t eid) :
     phosphor::dump::Entry(bus, objPath.c_str(), dumpId, timeStamp, dumpSize,
                           std::string(), status, originatorId, originatorType,
                           parent),
@@ -42,6 +43,7 @@ Entry::Entry(sdbusplus::bus_t& bus, const std::string& objPath, uint32_t dumpId,
     EntryIfaces(bus, objPath.c_str(), EntryIfaces::action::defer_emit)
 {
     sourceDumpId(sourceId);
+    pelid(static_cast<uint32_t>(eid));
     userChallenge(usrChallenge);
     systemImpact(sysImpact);
     // Emit deferred signal.
@@ -49,7 +51,7 @@ Entry::Entry(sdbusplus::bus_t& bus, const std::string& objPath, uint32_t dumpId,
 }
 
 Entry::Entry(sdbusplus::bus_t& bus, const std::string& objPath, uint32_t dumpId,
-             phosphor::dump::Manager& parent) :
+             phosphor::dump::Manager& parent, uint64_t eid) :
     phosphor::dump::Entry(bus, objPath.c_str(), dumpId, 0, 0, "",
                           phosphor::dump::OperationStatus::InProgress, "",
                           phosphor::dump::originatorTypes::Internal, parent),
@@ -60,6 +62,7 @@ Entry::Entry(sdbusplus::bus_t& bus, const std::string& objPath, uint32_t dumpId,
     EntryIfaces(bus, objPath.c_str(), EntryIfaces::action::defer_emit)
 {
     sourceDumpId(INVALID_SOURCE_ID);
+    pelid(static_cast<uint32_t>(eid));
 }
 
 } // namespace openpower::dump::host::system

@@ -3,12 +3,14 @@
 #include "host_dump_entry.hpp"
 
 #include <com/ibm/Dump/Entry/Resource/server.hpp>
+#include <org/open_power/Logging/PEL/PELID/server.hpp>
 
 namespace openpower::dump::host::resource
 {
 
 using EntryIfaces = sdbusplus::server::object_t<
-    sdbusplus::com::ibm::Dump::Entry::server::Resource>;
+    sdbusplus::com::ibm::Dump::Entry::server::Resource,
+    sdbusplus::org::open_power::Logging::PEL::server::PELID>;
 
 using originatorTypes = sdbusplus::xyz::openbmc_project::Common::server::
     OriginatedBy::OriginatorTypes;

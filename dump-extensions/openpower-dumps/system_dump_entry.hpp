@@ -2,13 +2,15 @@
 
 #include "host_dump_entry.hpp"
 
+#include <org/open_power/Logging/PEL/PELID/server.hpp>
 #include <xyz/openbmc_project/Dump/Entry/System/server.hpp>
 
 namespace openpower::dump::host::system
 {
 
 using EntryIfaces = sdbusplus::server::object_t<
-    sdbusplus::xyz::openbmc_project::Dump::Entry::server::System>;
+    sdbusplus::xyz::openbmc_project::Dump::Entry::server::System,
+    sdbusplus::org::open_power::Logging::PEL::server::PELID>;
 
 using SystemImpact =
     sdbusplus::common::xyz::openbmc_project::dump::entry::System::SystemImpact;
@@ -44,13 +46,16 @@ class Entry :
      *  @param[in] status - status  of the dump.
      *  @param[in] originatorId - Id of the originator of the dump
      *  @param[in] originatorType - Originator type
+     *  @param[in] eid - Error log identifier associated with the dump.
+     *                   Exposed externally as the PELID property (truncated to
+     *                   uint32). Defaults to 0 when no PEL is associated.
      *  @param[in] parent - The dump entry's parent.
      */
     Entry(sdbusplus::bus_t& bus, const std::string& objPath, uint32_t dumpId,
           uint64_t timeStamp, uint64_t dumpSize, uint32_t sourceId,
           phosphor::dump::OperationStatus status, std::string originatorId,
           phosphor::dump::originatorTypes originatorType,
-          phosphor::dump::Manager& parent);
+          phosphor::dump::Manager& parent, uint64_t eid = 0);
 
     /** @brief Constructor for the Dump Entry Object with disruptive
      *         or non-disruptive system dump type.
@@ -66,6 +71,8 @@ class Entry :
      *  @param[in] originatorType - Originator type
      *  @param[in] sysImpact - Whether disruptive or not
      *  @param[in] usrChallenge - A user challenge for authentication
+     *  @param[in] eid - Error log identifier associated with the dump.
+     *                   Defaults to 0 when no PEL is associated.
      *  @param[in] parent - The dump entry's parent.
      */
     Entry(sdbusplus::bus_t& bus, const std::string& objPath, uint32_t dumpId,
@@ -73,16 +80,18 @@ class Entry :
           phosphor::dump::OperationStatus status, std::string originatorId,
           phosphor::dump::originatorTypes originatorType,
           SystemImpact sysImpact, std::string usrChallenge,
-          phosphor::dump::Manager& parent);
+          phosphor::dump::Manager& parent, uint64_t eid = 0);
 
     /** @brief Constructor for creating a System dump entry with default values
      *  @param[in] bus - Bus to attach to.
      *  @param[in] objPath - Object path to attach to.
      *  @param[in] dumpId - Unique identifier for the dump.
+     *  @param[in] eid - Error log identifier associated with the dump.
+     *                   Defaults to 0 when no PEL is associated.
      *  @param[in] parent - Reference to the managing dump manager.
      */
     Entry(sdbusplus::bus_t& bus, const std::string& objPath, uint32_t dumpId,
-          phosphor::dump::Manager& parent);
+          phosphor::dump::Manager& parent, uint64_t eid = 0);
 
     void setDumpRequestStatusImpl(HostResponse status)
     {
