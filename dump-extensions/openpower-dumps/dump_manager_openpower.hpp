@@ -12,7 +12,6 @@
 #include <phosphor-logging/lg2.hpp>
 #include <sdbusplus/bus.hpp>
 #include <sdbusplus/server/object.hpp>
-#include <sdeventplus/source/child.hpp>
 #include <xyz/openbmc_project/Common/error.hpp>
 #include <xyz/openbmc_project/Dump/Create/server.hpp>
 
@@ -26,7 +25,6 @@ using OpDumpIfaces = sdbusplus::server::object_t<
 using UserMap = phosphor::dump::inotify::UserMap;
 
 using Watch = phosphor::dump::inotify::Watch;
-using ::sdeventplus::source::Child;
 
 using NotifyDumpTypes = sdbusplus::common::com::ibm::dump::Notify::DumpType;
 using OpDumpTypes = sdbusplus::common::com::ibm::dump::Create::DumpType;
@@ -76,21 +74,22 @@ class Manager :
                              std::filesystem::is_directory(path))
                     {
                         auto recursiveWatch = std::make_unique<Watch>(
-                            eventLoop, IN_NONBLOCK, IN_CLOSE_WRITE, EPOLLIN,
-                            path, [this](const UserMap& recursiveFileInfo) {
+                            eventLoop, IN_NONBLOCK,
+                            IN_CLOSE_WRITE | IN_MOVED_TO, EPOLLIN, path,
+                            [this](const UserMap& recursiveFileInfo) {
                                 for (const auto& [recursivePath,
                                                   recursiveEvent] :
                                      recursiveFileInfo)
                                 {
-                                    if (recursiveEvent == IN_CLOSE_WRITE &&
+                                    if ((recursiveEvent == IN_CLOSE_WRITE ||
+                                         recursiveEvent == IN_MOVED_TO) &&
                                         !std::filesystem::is_directory(
                                             recursivePath))
                                     {
                                         removeWatch(
                                             recursivePath.parent_path());
                                         updateEntry(recursivePath);
-                                    } // Here you might handle further nested
-                                      // directories if needed
+                                    }
                                 }
                             });
                         childWatchMap.emplace(path, std::move(recursiveWatch));

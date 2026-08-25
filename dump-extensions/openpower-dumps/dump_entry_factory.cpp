@@ -23,6 +23,10 @@ std::unique_ptr<phosphor::dump::Entry> DumpEntryFactory::createSystemDumpEntry(
     uint32_t id, std::filesystem::path& objPath, uint64_t timeStamp,
     const DumpParameters& dumpParams)
 {
+#if 0 // NOLINT(readability-avoid-unconditional-preprocessor-if)
+    // Disabled during testing: allow a new system dump to be created even
+    // when one is already in progress.  Re-enable for production.
+
     using Unavailable =
         sdbusplus::xyz::openbmc_project::Common::Error::Unavailable;
 
@@ -31,6 +35,7 @@ std::unique_ptr<phosphor::dump::Entry> DumpEntryFactory::createSystemDumpEntry(
         lg2::error("Another dump in progress or available to offload");
         elog<Unavailable>();
     }
+#endif
 
     using NotAllowed =
         sdbusplus::xyz::openbmc_project::Common::Error::NotAllowed;
